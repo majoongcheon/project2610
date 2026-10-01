@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- pioneer3 사용자 에이전트: 로그인하면 pm2 에 저장해 둔 web·admin·model-api 를 되살린다 (research R4, tasks T143).
+     설치: cp ops/launchd/com.team3.gugak.pm2.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.team3.gugak.pm2.plist
+     먼저 pm2 start ops/ecosystem.config.cjs && pm2 save 를 해 둔다. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.team3.gugak.pm2</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string><string>pm2 resurrect</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>StandardOutPath</key><string>/Users/pioneer3/Library/Logs/gugak-pm2.log</string>
+  <key>StandardErrorPath</key><string>/Users/pioneer3/Library/Logs/gugak-pm2.err.log</string>
+</dict>
+</plist>
