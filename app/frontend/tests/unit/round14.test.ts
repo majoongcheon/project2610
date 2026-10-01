@@ -51,7 +51,7 @@ describe('133~144 문구 · 배치', () => {
 describe('141 4단계 받기 카드가 제목과 함께 보인다(v-if 사슬)', () => {
   it('제목과 카드가 같은 v-else-if 묶음 안', () => {
     const t = tpl('src/pages/S3Download.vue');
-    // (2026-09-30 154번) 제목은 받기 카드 안 맨 위(C6 title)
-    expect(t).toMatch(/<template v-else-if="s">\s*<C6DownloadCard[\s\S]*?title="변환한 악보 저장하기"/);
+    // (2026-10-01 214번) 제목은 받기 카드 바깥 위 — 같은 v-else-if 묶음(section) 안
+    expect(t).toMatch(/<section v-else-if="s" class="save-wrap"[^>]*>\s*<h2 id="save-h" class="h2 center-h"[^>]*>변환한 악보 저장하기<\/h2>\s*<C6DownloadCard/);
   });
 });

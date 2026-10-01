@@ -67,7 +67,7 @@ function onKey(e: KeyboardEvent) {
     <!-- (2026-09-30 133번) 악기(1 · 2 · 3) 고르기 버튼 줄은 뺐다 — 음표는 악보에서 누르고, 음자리표를 누르면 그 악기 첫 음표 -->
 
     <p v-if="!order.length" class="small">이 악기에는 음표가 없습니다.</p>
-    <p v-else-if="!note" class="body" data-test="note-empty">악보에서 음표를 눌러 고르십시오.</p>
+    <p v-else-if="!note" class="body center-h" data-test="note-empty">악보에서 음표를 눌러 고르십시오.</p>
     <template v-else>
       <p class="body" aria-live="polite" data-test="note-where">
         {{ partLabel(notePart) }} · {{ where(note.startTick) }} · <b>{{ pitchName(note.pitch) }}</b> <span class="token">({{ note.pitch }})</span>

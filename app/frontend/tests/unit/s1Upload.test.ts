@@ -280,6 +280,11 @@ describe('S1Upload [예시 파일 고르기](2026-09-30 황송해, SD_02 ㊹ · 
     expect(w.get('[data-test="example-picked"]').text()).toContain('도라지'); // 193번: 괄호 뗌
     expect(w.get('[data-test="example-picked"]').text()).not.toContain('(정간보)');
     expect(w.find('[data-test="example-list"]').exists()).toBe(false);
+    // (2026-10-01 217번) 고른 예시 그림 카드 하나만 · [-] 없음 · [돌아가기]는 그대로
+    expect(w.get('[data-test="example-picked"] img').attributes('src')).toBe('/api/examples/doraji-jeongganbo/thumb');
+    expect(w.findAll('.example-card').length).toBe(0);
+    expect(w.find('[data-test="remove-example"]').exists()).toBe(false);
+    expect(w.find('[data-test="go-back"]').exists()).toBe(true);
     await w.get('[data-test="step-next"] button').trigger('click');
     await flushPromises();
     const post = calls.find((c) => c.url === '/api/requests/example');

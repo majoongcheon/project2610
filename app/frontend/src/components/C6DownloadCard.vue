@@ -181,6 +181,9 @@ const shownNotes = computed(() => {
 .formats-row { display: flex; align-items: center; justify-content: center; gap: var(--spacing-8); justify-self: center; }
 .formats { flex-wrap: wrap; justify-self: center; justify-content: center; }
 .center { justify-self: center; }
+/* (2026-10-01 황송해 216번) 마우스를 올리면 연한 갈색 바탕 — 고른 칸(갈색 채움) · 막힌 칸은 그대로 */
+.formats span { transition: background-color 0.15s ease; }
+.formats label:hover input:not(:checked):not(:disabled) + span { background: var(--color-clay-light); }
 .formats.off span { color: var(--color-slate-gray); }
 .formats input:disabled { cursor: not-allowed; }
 .formats label.off span { color: var(--color-slate-gray); text-decoration: line-through; }

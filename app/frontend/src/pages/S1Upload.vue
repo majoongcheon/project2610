@@ -174,10 +174,6 @@ function goBack() {
   examplesOpen.value = false;
   req.gate = null;
 }
-function removeExample() {
-  chosenExample.value = null;
-  if (req.gate?.gate === 'G1') req.gate = null;
-}
 
 async function start() {
   if (files.value.length === 0 && !chosenExample.value) return;
@@ -307,12 +303,12 @@ async function onGateAction() {
 
           <input ref="input" class="sr-only" type="file" multiple :accept="ACCEPT" tabindex="-1" aria-hidden="true" @change="pick(($event.target as HTMLInputElement).files, replaceNext)" />
 
-          <!-- 고른 예시(72번) — 파일은 서버에 있어 이름만 보인다 -->
-          <div v-if="chosenExample" class="picked" data-test="example-picked">
-            <span class="chip on-white">예시</span>
-            <span class="body"><b>{{ exampleDisplayTitle(chosenExample.title) }}</b></span>
-            <button type="button" class="btn btn-secondary btn-sm btn-remove" :aria-label="`예시 ${exampleDisplayTitle(chosenExample.title)} 빼기`" data-test="remove-example" @click="removeExample">-</button>
-          </div>
+          <!-- 고른 예시(72번) — 파일은 서버에 있어 미리보기 · 이름만 보인다.
+               (2026-10-01 황송해 217번) 다른 카드는 사라지고 고른 예시 그림 카드 하나만 가운데. 하나만 고르므로 [-](빼기)는 없다 — 다시 고르려면 [돌아가기] -->
+          <figure v-if="chosenExample" class="example-chosen" :aria-label="`고른 예시 ${exampleDisplayTitle(chosenExample.title)}`" data-test="example-picked">
+            <img :src="exampleThumbUrl(chosenExample)" alt="" width="100" height="100" />
+            <figcaption class="small">{{ exampleDisplayTitle(chosenExample.title) }}</figcaption>
+          </figure>
 
           <!-- PDF 한 개 — 쪽수·쪽마다 사진 크기는 서버(모델 API 검사기)가 본다 -->
           <div v-if="file && !isPhotos" class="picked">
@@ -423,7 +419,10 @@ async function onGateAction() {
   display: inline-flex; padding: 6px; cursor: pointer; line-height: 0;
   color: var(--color-ink-black); background: var(--color-white);
   border: 1.5px solid var(--color-hairline); border-radius: var(--rounded-sm);
+  transition: transform 0.2s ease;
 }
+/* (2026-10-01 황송해 216번) 예시 악보에 마우스를 올리면 살짝 커지고, 빼면 원래 크기로 */
+.type-pic:hover, .example-card:hover { transform: scale(1.05); }
 /* 고른 종류는 그림 · 테두리가 갈색으로 남는다(알약은 .segmented 고른 색 = 갈색) */
 .type-pic.on { color: var(--color-clay-brown); border-color: var(--color-clay-brown); border-width: 2px; }
 /* 마우스를 올리거나 키보드 초점이 가면 갈색(스타일가이드 clay-brown) — 그림은 currentColor 로 그려져 함께 바뀐다 */
@@ -437,8 +436,11 @@ async function onGateAction() {
 .example-group { display: grid; gap: var(--spacing-8); justify-items: center; }
 .example-group-label { margin: 0; justify-self: stretch; padding-top: var(--spacing-8); border-top: 1.5px solid var(--color-primary); min-width: 96px; text-align: center; font: 700 var(--text-small)/1.2 var(--font-sans); color: var(--color-primary); }
 .example-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-8); justify-content: center; }
-.example-card { display: grid; justify-items: center; gap: 4px; width: 128px; padding: var(--spacing-8); background: var(--color-white); border: 1px solid var(--color-input-border); border-radius: 8px; cursor: pointer; color: inherit; font: inherit; }
+.example-card { display: grid; justify-items: center; gap: 4px; width: 128px; padding: var(--spacing-8); background: var(--color-white); border: 1px solid var(--color-input-border); border-radius: 8px; cursor: pointer; color: inherit; font: inherit; transition: transform 0.2s ease; }
 .example-card:hover, .example-card:focus-visible { border-color: var(--color-primary); }
+/* (217번) 고른 예시 — 예시 카드와 같은 모양, 누를 수 없어 마우스 효과 없음 · 올리기 영역 가운데 */
+.example-chosen { margin: 0; justify-self: center; display: grid; justify-items: center; gap: 4px; width: 128px; padding: var(--spacing-8); background: var(--color-white); border: 1.5px solid var(--color-primary); border-radius: 8px; }
+.example-chosen img { width: 100px; height: 100px; object-fit: cover; object-position: top; border-radius: 4px; background: var(--color-white); }
 .example-card img { width: 100px; height: 100px; object-fit: cover; object-position: top; border-radius: 4px; background: var(--color-white); }
 /* 말풍선 — 그림 아래에 떠서(겹쳐) 뒤 내용을 밀지 않는다. 화면 폭을 넘지 않게 폭을 제한한다 */
 .type-tip {

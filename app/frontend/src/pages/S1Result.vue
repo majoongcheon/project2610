@@ -279,7 +279,7 @@ const engineHelp = computed(() => {
           <div class="row"><button type="button" class="btn btn-secondary" @click="emit('startOver')">다른 파일 올리기</button></div>
         </div>
 
-        <ScoreView :musicxml="req.score?.musicxml ?? null" :label="'결과 악보'" :part-names="false" zoomable :fetch-error="!req.score && req.loadError ? req.loadError.reason : null">
+        <ScoreView :musicxml="req.score?.musicxml ?? null" :label="'결과 악보'" hide-label :part-names="false" zoomable :fetch-error="!req.score && req.loadError ? req.loadError.reason : null">
           <template #help><HelpTip label="인식 엔진" :text="engineHelp" /></template>
         </ScoreView>
 

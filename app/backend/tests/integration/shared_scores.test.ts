@@ -177,3 +177,42 @@ describe('UC19 공유 악보 내리기(운영자)', () => {
     expect(await one('SELECT 1 AS ok FROM role_permission WHERE role_code = ? AND uc_code = ?', ['operator', 'UC19'])).toBeTruthy();
   });
 });
+
+// (2026-10-01 황송해 확인 요청) 1단계 악보 공유하기 정렬 — 최신 순은 공유 시각이 늦은 것부터, 좋아요 순은 좋아요 많은 것부터
+describe('UC18 공유 악보 목록 정렬', () => {
+  it('최신 순 · 좋아요 순이 서로 다르게 정렬된다(오래된 악보에 좋아요가 더 많을 때)', async () => {
+    const owner = await loggedInAgent(app, 'share-sort-owner');
+    const other = await loggedInAgent(app, 'share-sort-other');
+    const nos = [await completedRequest(owner), await completedRequest(owner), await completedRequest(owner)];
+    const shares: string[] = [];
+    for (const [i, no] of nos.entries()) {
+      const sh = await owner.put(`/api/requests/${no}/share`).send({ title: `정렬 시험 ${i + 1}` });
+      expect(sh.status).toBe(200);
+      shares.push(String(sh.body.share_no));
+    }
+    // 공유 시각을 분명히 벌린다: 1번이 가장 오래, 3번이 가장 최근(다른 시험 항목보다 뒤)
+    for (const [i, s] of shares.entries()) {
+      await exec('UPDATE shared_score SET shared_at = DATE_ADD(CURRENT_TIMESTAMP(3), INTERVAL ? MINUTE) WHERE share_no = ?', [i + 1, s]);
+    }
+    // 가장 오래된 1번에 좋아요 2개, 2번에 1개, 3번은 0개
+    const third = await loggedInAgent(app, 'share-sort-third');
+    for (const a of [other, third]) expect((await a.post(`/api/shared-scores/${shares[0]}/like`)).status).toBe(200);
+    expect((await other.post(`/api/shared-scores/${shares[1]}/like`)).status).toBe(200);
+
+    const pick = (items: { share_no: string }[]) => items.map((x) => x.share_no).filter((n) => shares.includes(n));
+    const recent = await other.get('/api/shared-scores').query({ sort: 'recent', limit: 50 });
+    expect(recent.body.sort).toBe('recent');
+    expect(pick(recent.body.items)).toEqual([shares[2], shares[1], shares[0]]);
+    expect(recent.body.items[0].share_no).toBe(shares[2]); // 가장 최근 공유가 목록 맨 위
+    // 최신 순 전체 목록이 공유 시각 내림차순
+    const times = recent.body.items.map((x: { shared_at: string }) => new Date(x.shared_at).getTime());
+    expect(times).toEqual([...times].sort((a, b) => b - a));
+
+    const likes = await other.get('/api/shared-scores').query({ sort: 'likes', limit: 50 });
+    expect(pick(likes.body.items)).toEqual([shares[0], shares[1], shares[2]]);
+
+    // 1단계는 한 쪽에 4개(limit=4) — 최신 순 첫 쪽 맨 위도 가장 최근 공유
+    const page1 = await other.get('/api/shared-scores').query({ sort: 'recent', limit: 4, offset: 0 });
+    expect(page1.body.items[0].share_no).toBe(shares[2]);
+  });
+});

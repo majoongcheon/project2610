@@ -74,17 +74,18 @@ const band = computed(() => {
       </div>
 
       <p v-if="loading" class="body" role="status">받을 파일을 준비하고 있습니다.</p>
-      <!-- (2026-09-30 141 · 154번) 제목 "변환한 악보 저장하기"는 받기 카드 안 맨 위 -->
-      <template v-else-if="s">
+      <!-- (2026-09-30 141 · 154번) 제목 "변환한 악보 저장하기" — (2026-10-01 황송해 214번) 받기 카드 바깥 위 · 1단계 페이지 제목처럼 .h2 가운데 -->
+      <section v-else-if="s" class="save-wrap" aria-labelledby="save-h">
+        <h2 id="save-h" class="h2 center-h" data-test="save-title">변환한 악보 저장하기</h2>
         <C6DownloadCard
-          :request-no="requestNo" title="변환한 악보 저장하기"
+          :request-no="requestNo" title=""
           :edit-ops="ops" :instruments="instruments" :expired="expired" :midi-available="s.midi_available"
           :notes="{
             mp3: [`연주 악기: ${ensemble || '기본 국악기 구성'}`],
             musicxml: ['추천 조합으로 늘어난 악기는 원래 선율을 복사한 성부로 적힙니다.'],
           }"
         />
-      </template>
+      </section>
 
       <!-- 모두에게 공유(2026-09-30 105번: 2단계에서 옮김, UC18 · SD_02 §4-6) — 기본은 공유 안 함 -->
       <SharePanel v-if="s && s.status === 'completed'" :request-no="requestNo" :expired="expired" />
@@ -99,3 +100,6 @@ const band = computed(() => {
   </div>
 </template>
 
+<style scoped>
+.save-wrap { display: grid; gap: var(--spacing-16); }
+</style>

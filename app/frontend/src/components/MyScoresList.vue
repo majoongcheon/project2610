@@ -82,7 +82,7 @@ async function confirmRemove() {
 
 <template>
   <section class="mine" aria-labelledby="mine-h" data-test="my-scores">
-    <h2 id="mine-h" class="h3 center-h">내가 만든 악보</h2>
+    <h2 id="mine-h" class="h2 center-h">내가 만든 악보</h2>
     <!-- (2026-09-30 황송해 167번) 24시간 보관 문장은 뺐다. (2026-10-01 199번) 설명 문장도 뺐다. 목록 기준은 그대로 -->
     <p v-if="notice" class="small" role="status" data-test="my-notice">{{ notice }}</p>
     <p v-if="loading" class="small" role="status">불러오는 중입니다.</p>

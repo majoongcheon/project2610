@@ -4,6 +4,8 @@
 .page-head { display: grid; gap: var(--spacing-16); }
 .page-head .h2 { margin-top: var(--spacing-8); }
 .page-head p { margin: 0; max-width: 720px; color: var(--color-charcoal); }
+/* (2026-10-01 황송해 214번) 가운데 머리는 720px 안내 문장 상자째 가운데 */
+.page-head.center-h > p { justify-self: center; }
 .section { display: grid; gap: var(--spacing-24); }
 .section > .h3 + p { margin: 0; color: var(--color-charcoal); }
 .two-col { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: var(--spacing-32); align-items: start; }

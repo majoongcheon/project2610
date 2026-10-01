@@ -18,7 +18,9 @@ const props = withDefaults(defineProps<{
   zoomable?: boolean;
   /** 악기 음역을 벗어난 음표 id — 음표 머리를 빨간색(range-red)으로 칠한다(2026-09-30 박예은, BR-EDT-03). doc 이 있어야 칠한다 */
   outOfRange?: string[] | null;
-}>(), { label: '결과 악보', caption: null, doc: null, selectedNoteId: null, fetchError: null, partNames: true, zoomable: false, outOfRange: null });
+  /** 악보 위 작은 이름을 화면에서 뺄지 — 2단계 "결과 악보"(2026-10-01 황송해 214번). 화면 읽기 이름(aria-label)은 남긴다 */
+  hideLabel?: boolean;
+}>(), { label: '결과 악보', caption: null, doc: null, selectedNoteId: null, fetchError: null, partNames: true, zoomable: false, outOfRange: null, hideLabel: false });
 const emit = defineEmits<{ select: [noteId: string]; pickPart: [part: number] }>();
 const host = ref<HTMLDivElement | null>(null);
 const state = ref<'idle' | 'drawing' | 'ok' | 'error'>('idle');
@@ -264,7 +266,7 @@ onBeforeUnmount(() => { if (t) clearTimeout(t); if (rt) clearTimeout(rt); ro?.di
 <template>
   <figure class="score" :aria-label="label" :aria-busy="state === 'drawing' ? 'true' : undefined">
     <figcaption class="cap">
-      <span class="h4">{{ label }}</span>
+      <span v-if="!hideLabel" class="h4">{{ label }}</span>
       <span class="cap-tools">
         <span v-if="zoomable" class="zoom" role="group" aria-label="악보 크기" data-test="zoom">
           <button type="button" class="btn-icon zb" aria-label="악보 작게" :disabled="zoom <= ZOOM_MIN" data-test="zoom-out" @click="setZoom(zoom - ZOOM_STEP)">−</button>
@@ -286,7 +288,7 @@ onBeforeUnmount(() => { if (t) clearTimeout(t); if (rt) clearTimeout(rt); ro?.di
 <style scoped>
 .score { margin: 0; display: grid; gap: var(--spacing-16); padding: var(--spacing-32) 40px; border-radius: var(--rounded-stadium); background: var(--color-white); min-width: 0; }
 .score > p { margin: 0; }
-.cap-tools { display: inline-flex; align-items: center; gap: var(--spacing-8); }
+.cap-tools { margin-left: auto; display: inline-flex; align-items: center; gap: var(--spacing-8); }
 .zoom { display: inline-flex; align-items: center; gap: 4px; }
 .zb { width: 44px; height: 44px; font-size: 18px; }
 .zb:disabled { color: var(--color-slate-gray); border-color: var(--color-dust-taupe); cursor: not-allowed; }

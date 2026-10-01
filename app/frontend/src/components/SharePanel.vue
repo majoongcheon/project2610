@@ -35,9 +35,13 @@ async function unshare() {
 </script>
 
 <template>
-  <section class="share" aria-labelledby="share-h" data-test="share-panel">
+  <section class="share-wrap" aria-labelledby="share-h" data-test="share-panel">
     <!-- (2026-09-30 143 · 144번) 황송해 님 지정 문구 그대로(합쇼체 예외, 스타일가이드 §6-6) -->
-    <h2 id="share-h" class="h4 center-h">제작한 악보를 다른 사람들에게 공유해보아요.</h2>
+    <!-- (2026-10-01 황송해 214번) 제목은 흰 카드 바깥 위 · 1단계 페이지 제목처럼 .h2 가운데 -->
+    <h2 id="share-h" class="h2 center-h">제작한 악보를 다른 사람들에게 공유해보아요.</h2>
+    <!-- (2026-10-01 황송해 215번) 안내 문장도 카드 바깥 · 제목 바로 아래 가운데(공유하기 전에만) -->
+    <p v-if="!state.shared" class="small muted center-h" data-test="share-note">공유된 악보는 공유게시판에 3일간 저장됩니다. 올린 사람의 이름과 개인정보는 보이지 않으니 안심하세요.</p>
+    <div class="share">
     <template v-if="state.shared">
       <p class="body" role="status" data-test="share-done">모두에게 공유했습니다: <b>{{ state.title }}</b></p>
       <p v-if="state.taken_down" class="small">운영자가 목록에서 내린 악보입니다.</p>
@@ -46,9 +50,9 @@ async function unshare() {
       </div>
     </template>
     <template v-else>
-      <p class="small muted" data-test="share-note">공유된 악보는 공유게시판에 3일간 저장됩니다. 올린 사람의 이름과 개인정보는 보이지 않으니 안심하세요.</p>
       <div class="row">
-        <label class="field grow">
+        <!-- (215번) 칸 이름 "제목"은 입력창 왼쪽 같은 줄 -->
+        <label class="field grow inline-field">
           <span class="label">제목</span>
           <input v-model="title" class="input" type="text" maxlength="60" placeholder="예: 아리랑 (세마치)" :disabled="expired" data-test="share-title" />
         </label>
@@ -57,12 +61,18 @@ async function unshare() {
     </template>
     <p v-if="expired" class="small">사유: 보관 기간이 지나 공유할 수 없습니다.</p>
     <p v-if="error" class="field-error" role="status">{{ error }}</p>
+    </div>
   </section>
 </template>
 
 <style scoped>
 .share { display: grid; gap: var(--spacing-16); padding: var(--spacing-24); border-radius: var(--rounded-stadium); background: var(--color-white); }
 .share > * { margin: 0; }
-.row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--spacing-16); }
+.share-wrap { display: grid; gap: var(--spacing-16); }
+.share-wrap > p { margin: 0; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--spacing-16); }
 .grow { flex: 1 1 240px; }
+.inline-field { display: flex; align-items: center; gap: var(--spacing-8); }
+.inline-field .label { flex: none; }
+.inline-field .input { flex: 1 1 auto; min-width: 0; }
 </style>

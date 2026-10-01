@@ -109,7 +109,7 @@ async function like(it: SharedScoreItem) {
   <section class="shared" aria-labelledby="shared-h" data-test="shared-list">
     <div class="head">
       <!-- (2026-09-30 108번) "공유 악보" → "악보 공유하기" -->
-      <h2 id="shared-h" class="h3 center-h">악보 공유하기</h2>
+      <h2 id="shared-h" class="h2 center-h">악보 공유하기</h2>
       <p class="small muted center-h">다른 사람이 만든 악보를 먼저 들어 보십시오. 같은 곡이 있으면 다시 올리지 않아도 됩니다.</p>
       <div class="segmented" role="radiogroup" aria-label="정렬">
         <label><input type="radio" name="shared-sort" value="likes" :checked="sort === 'likes'" data-test="sort-likes" @change="setSort('likes')" /><span>좋아요 많은 순</span></label>
