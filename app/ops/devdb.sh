@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 개발·시험용 로컬 MariaDB (팀 DB 가 아님).
+# 개발·시험용 로컬 MariaDB (팀 DB 가 아님). 2026-10-02 부터 운영 서비스는 팀 DB(ABC10pioneer3)를 쓴다 — 이 DB 는 시험·개발용.
 #   데이터: app/.devdb/data   소켓: app/.devdb/mysqld.sock   포트: 127.0.0.1:${DEVDB_PORT:-26133}
 #   사용: bash ops/devdb.sh start | stop | status | reset | sql [DB]
 # 팀 DB(ABC10pioneer3)에 적용할 때는 이 스크립트가 아니라 `npm run db:migrate`(.env 의 DB_*)를 쓴다.

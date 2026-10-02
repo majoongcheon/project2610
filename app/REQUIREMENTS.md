@@ -57,10 +57,29 @@ cd model-api && uv sync --frozen && cd ..  # pyproject.toml + uv.lock (FastAPI �
 
 ## 7. 처음 실행 순서
 
+<!--
+  현재 서버 저장 설정 (2026-10-02 조성기 기록 · 교수님 지시로 서비스를 내릴 때 · SD_04 §4-1 · tasks T433)
+  ─ 이 서버(pioneer3, Mac Studio)에서 p3.sumzip.com 서비스가 쓰던 저장 위치. 비밀값(DB_PASSWORD · 키 · SESSION_SECRET)은 적지 않는다.
+  · DB      : (2026-10-02 이관) 교수님 배정 팀 DB = 이 서버(Studio-B)의 MariaDB 12.0.2
+              app/.env DB_HOST=mis.iptime.org · DB_PORT=23306 · DB_USER=pioneer3 · DB_NAME=ABC10pioneer3 (비밀번호는 .env 에만)
+              서버 안 주소(127.0.0.1 · 192.168.0.19)로는 닫혀 있어 외부 주소로 접속한다. 권한은 ABC10pioneer3 하나에 ALL.
+              표 45 · 뷰 41 · 트리거 7 · migration 기록 20 — 개발 DB(gugak_dev)에서 통째로 옮김(표별 행 수 · 뷰 정의 일치 확인)
+              주의: WITH 절을 쓰는 뷰를 새로 만들 때는 DB 이름을 소문자(abc10pioneer3)로 접속해야 만들어진다
+                    (lower_case_table_names=2 · DB 이름 대문자 때문, 조회는 어느 쪽이든 됨)
+              개발 DB(ops/devdb.sh, 127.0.0.1:26133, app/.devdb)는 시험 · 개발용으로 남김(꺼 둠)
+  · 파일    : STORAGE_DIR=/Users/pioneer3/project2610/app/storage — 올린 사진 · PDF, 결과 MusicXML · MIDI · PDF · MP3 (DB 에는 경로만)
+  · 엔진    : ENGINES_DIR=/Users/pioneer3/gugak-engines (homr · jeongganbo · audiveris · FluidSynth)
+  · 포트    : 입구 9503 · 웹 9523 · 관리자 26101 · 모델 API 9543 · 예시 26102 · DB 23306(팀 DB, mis.iptime.org) — 개발 DB 는 26133 (pm2 설정 ops/ecosystem.config.cjs)
+  · 상태    : 2026-10-02 서비스 5개(check_project.sh stop all) · 개발 DB(ops/devdb.sh stop) 모두 내림. 데이터 폴더는 지우지 않음.
+              자동 되살리기 없음 — launchd plist 는 Disabled(설치 안 함), pm2 저장 목록 비움(원본 backup/원본_20261002_JSG_자동실행해제/pm2/).
+              다시 켜면(./check_project.sh start) .env 가 팀 DB 를 가리키므로 개발 DB 는 켜지 않고 새 데이터가 팀 DB · storage 에 쌓인다.
+              데이터를 넘길 때는 팀 DB(ABC10pioneer3)와 app/storage 를 함께 봐야 기록과 파일이 맞는다.
+-->
+
 ```bash
 cp .env.example .env && chmod 600 .env   # DB_* · SESSION_SECRET · ADDR_HASH_SALT 등 채우기
 openssl rand -hex 32                     # → SESSION_SECRET (필수 · 32자 이상, 없거나 짧으면 웹 서버가 켜지지 않음)
-bash ops/devdb.sh start                  # 개발 DB (팀 DB 를 쓰면 생략하고 .env DB_* 만)
+bash ops/devdb.sh start                  # 개발 DB — 지금 운영은 팀 DB 라 생략(.env DB_* 만)
 npm run db:migrate && npm run db:seed-settings
 npm run build
 npm run admin:create -- --login <아이디> --name <이름>   # 운영자 계정
